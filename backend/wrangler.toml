@@ -1,8 +1,10 @@
 name = "backend"
 compatibility_date = "2023-12-01"
 
-# [vars]
+[vars]
 # MY_VAR = "my-variable"
+DATABASE_URL="accerate url"
+JWT_SECRET="jwt secret here"
 
 # [[kv_namespaces]]
 # binding = "MY_KV_NAMESPACE"
