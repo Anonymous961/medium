@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { hashPassword, verifyPassword } from '../../utils/hashing'
 import { sign } from 'hono/jwt'
+import { signinInput, signupInput } from '@anonymous961/medium-common'
 
 export const userRouter = new Hono<{
     Bindings: {
@@ -15,26 +16,32 @@ userRouter.post('/signup', async (c) => {
     const prisma = new PrismaClient({
         datasourceUrl: c.env?.DATABASE_URL,
     }).$extends(withAccelerate())
+    console.log("signup working")
     const body = await c.req.json();
+    const { success } = signupInput.safeParse(body);
+    if (!success) {
+        c.status(411)
+        return c.json({ message: "inputs are incorrect" })
+    }
     try {
         const exists = await prisma.user.findFirst({
             where: {
-                email: body.email
+                email: body.username
             }
         })
         if (exists) {
-            return c.status(403)
+            c.status(403)
+            return c.json({ message: "user already exists" })
         }
         const hashedPassword = await hashPassword(body.password)
         const user = await prisma.user.create({
             data: {
-                email: body.email,
-                password: hashedPassword
+                email: body.username,
+                password: hashedPassword,
+                name: body.name
             }
         })
-        console.log(user)
         const token = await sign({ id: user.id }, c.env.JWT_SECRET);
-        console.log(token)
         return c.json({ token })
     } catch (error) {
         console.error(error)
@@ -47,10 +54,15 @@ userRouter.post('/signin', async (c) => {
         datasourceUrl: c.env?.DATABASE_URL,
     }).$extends(withAccelerate())
     const body = await c.req.json()
+    const { success } = signinInput.safeParse(body);
+    if (!success) {
+        c.status(411)
+        return c.json({ message: "inputs are incorrect" })
+    }
     try {
         const user = await prisma.user.findFirst({
             where: {
-                email: body.email
+                email: body.username
             }
         })
         if (!user) {

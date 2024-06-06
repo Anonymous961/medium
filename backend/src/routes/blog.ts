@@ -1,3 +1,4 @@
+import { createBlogInput, updateBlogInput } from '@anonymous961/medium-common'
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { Hono } from "hono"
@@ -32,7 +33,6 @@ blogRouter.get('/', async (c) => {
     }).$extends(withAccelerate())
     try {
         const posts = await prisma.post.findMany();
-        console.log(posts)
         return c.json(posts)
     } catch (error) {
         console.error(error)
@@ -45,6 +45,11 @@ blogRouter.post('/', async (c) => {
         datasourceUrl: c.env?.DATABASE_URL,
     }).$extends(withAccelerate())
     const body = await c.req.json()
+    const { success } = createBlogInput.safeParse(body);
+    if (!success) {
+        c.status(411)
+        return c.json({ message: "inputs are incorrect" })
+    }
     const userId = c.get("userId")
     try {
         const blog = await prisma.post.create({
@@ -54,7 +59,6 @@ blogRouter.post('/', async (c) => {
                 authorId: userId
             },
         })
-        console.log(blog)
         return c.json(blog)
     } catch (error) {
         console.error(error)
@@ -62,17 +66,23 @@ blogRouter.post('/', async (c) => {
     }
 })
 
-blogRouter.put('/:id', async (c) => {
+blogRouter.put('/', async (c) => {
     const prisma = new PrismaClient({
         datasourceUrl: c.env?.DATABASE_URL,
     }).$extends(withAccelerate())
-    const id = c.req.param('id');
     const body = await c.req.json()
+    console.log(body)
+    const { success, error } = updateBlogInput.safeParse(body); //authorId to UUID
+    if (!success) {
+        console.error(error)
+        c.status(411)
+        return c.json({ message: "inputs are incorrect" })
+    }
     const userId = c.get("userId")
     try {
         const blog = await prisma.post.update({
             where: {
-                id,
+                id: body.id,
                 authorId: userId
             },
             data: {
