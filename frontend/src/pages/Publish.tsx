@@ -3,10 +3,13 @@ import Appbar from "../components/Appbar";
 import { BACKEND_URL } from "../config";
 import { ChangeEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { CreateBlogInput } from "@anonymous961/medium-common";
 
 export const Publish = () => {
-  const [title, setTitle] = useState<string>();
-  const [description, setDescription] = useState<string>();
+  const [post, setPost] = useState<CreateBlogInput>({
+    title: "",
+    content: "",
+  });
   const navigate = useNavigate();
   return (
     <div>
@@ -18,20 +21,19 @@ export const Publish = () => {
           </label>
           <input
             type="text"
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) => setPost({ ...post, title: e.target.value })}
             className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
             placeholder="Title"
           />
-          <TextEditor onChange={(e) => setDescription(e.target.value)} />
+          <TextEditor
+            onChange={(e) => setPost({ ...post, content: e.target.value })}
+          />
           <button
             type="submit"
             onClick={async () => {
               const response = await axios.post(
                 `${BACKEND_URL}/api/v1/blog`,
-                {
-                  title,
-                  content: description,
-                },
+                post,
                 {
                   headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
