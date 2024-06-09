@@ -1,6 +1,6 @@
 # Medium
 
-This is a clone for medium platform. Made just to understand the concept of serverless backend with cloudfare and npm package publiscation to npm registery.
+This project is a clone of the Medium platform, created to explore the concept of a serverless backend using Cloudflare and Hono. It serves as a learning tool to compare Hono with Express and to understand the structure and functionality of npm packages within a monorepo setup.
 
 ## Features
 
