@@ -25,10 +25,11 @@ export const Blogs = () => {
     <div>
       <Appbar />
       <div className="flex justify-center">
-        <div className="">
+        <div className="font-mono">
           {blogs.map((blog, index) => (
             <BlogCard
               id={blog.id}
+              // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
               key={index}
               authorName={blog.author.name || "Anonymous"}
               title={blog.title}

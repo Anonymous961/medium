@@ -20,7 +20,7 @@ export default {
         typing: 'typing 1s steps(20) 1s 1 normal both, blink 0.75s step-end infinite',
       },
       backgroundImage: {
-        "parallax": 'url("./public/cover.jpg")',
+        "parallax": 'url("https://i.postimg.cc/NMBSR317/cover.jpg")',
       }
     },
   },
