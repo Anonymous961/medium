@@ -1,6 +1,6 @@
-import { SignupInput } from "@anonymous961/medium-common";
+import type { SignupInput } from "@anonymous961/medium-common";
 import axios from "axios";
-import { ChangeEvent, useState } from "react";
+import { type ChangeEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { BACKEND_URL } from "../config";
 
@@ -107,6 +107,7 @@ function LabelledInput({
 }: LabelledInputType) {
   return (
     <div>
+      {/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
       <label className="block mb-2 text-sm font-semibold text-black pt-4">
         {label}
       </label>
